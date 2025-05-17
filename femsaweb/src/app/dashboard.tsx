@@ -1,63 +1,74 @@
 "use client";
-import Image from "next/image";
-import { useState } from "react";
+// pages/dashboard.tsx
+import React, { useEffect, useState } from "react";
 
-// Simulación de datos de productos
-const productos = [
-  {
-    nombre: "CocaCola",
-    almacen: 120,
-    vendidos: 80,
-    rotacion: "Alta",
-    img: "/images/cocacola.png", // Cambia por la ruta real si tienes imágenes
-  },
-  {
-    nombre: "Fanta",
-    almacen: 60,
-    vendidos: 40,
-    rotacion: "Media",
-    img: "/images/fanta.png",
-  },
-  {
-    nombre: "Sprite",
-    almacen: 90,
-    vendidos: 55,
-    rotacion: "Baja",
-    img: "/images/sprite.png",
-  },
-];
+interface Diferencia {
+  producto: string;
+  posicion_antes: string;
+  posicion_despues: string;
+}
 
-export default function Dashboard() {
-  // Aquí podrías obtener la imagen real del realograma desde un estado global o backend
-  const [realograma, setRealograma] = useState<string | null>(null);
+interface Resultado {
+  diferencias: Diferencia[];
+  imagen_resultado: string;
+}
+
+export default function DashboardPage() {
+  const [resultado, setResultado] = useState<Resultado | null>(null);
+
+  // Simulación de carga (en producción usaría props, contexto, router.query, etc.)
+  useEffect(() => {
+    const cargarDatos = async () => {
+      const res = await fetch("http://localhost:8000/procesar/ejemplo", {
+        method: "GET"
+      });
+      const data = await res.json();
+      setResultado(data);
+    };
+
+    cargarDatos();
+  }, []);
 
   return (
-    <section className="flex flex-col md:flex-row gap-8">
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
-        {productos.map((prod) => (
-          <div key={prod.nombre} className="bg-white rounded-xl shadow p-6 flex flex-col gap-2 border border-gray-200">
-            <div className="flex items-center gap-4">
-              <Image src={prod.img} alt={prod.nombre} width={48} height={48} className="rounded" />
-              <h3 className="text-xl font-bold">{prod.nombre}</h3>
-            </div>
-            <div className="mt-2">
-              <p className="text-gray-700">En almacenamiento: <span className="font-semibold">{prod.almacen}</span></p>
-              <p className="text-gray-700">Vendidos: <span className="font-semibold">{prod.vendidos}</span></p>
-              <p className="text-gray-700">Rotación: <span className="font-semibold">{prod.rotacion}</span></p>
-            </div>
+    <div style={{ padding: "2rem" }}>
+      <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>Dashboard de Estante</h1>
+
+      {resultado ? (
+        <>
+          <div>
+            <h2>Diferencias Detectadas:</h2>
+            <table border={1} cellPadding={10}>
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Antes</th>
+                  <th>Después</th>
+                </tr>
+              </thead>
+              <tbody>
+                {resultado.diferencias.map((diff, idx) => (
+                  <tr key={idx}>
+                    <td>{diff.producto}</td>
+                    <td>{diff.posicion_antes}</td>
+                    <td>{diff.posicion_despues}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        ))}
-      </div>
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <h4 className="text-lg font-semibold mb-4">Realograma</h4>
-        {realograma ? (
-          <Image src={realograma} alt="Realograma" width={320} height={320} className="rounded-xl border" />
-        ) : (
-          <div className="w-80 h-80 bg-gray-200 flex items-center justify-center rounded-xl text-gray-500">
-            Sin imagen de realograma
+
+          <div style={{ marginTop: "2rem" }}>
+            <h2>Visualización YOLO</h2>
+            <img
+              src={`data:image/png;base64,${resultado.imagen_resultado}`}
+              alt="Imagen resultado"
+              style={{ maxWidth: "100%" }}
+            />
           </div>
-        )}
-      </div>
-    </section>
+        </>
+      ) : (
+        <p>Cargando resultados...</p>
+      )}
+    </div>
   );
 }

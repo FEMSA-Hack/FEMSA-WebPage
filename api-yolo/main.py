@@ -1,58 +1,111 @@
 from fastapi import FastAPI, File, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import cv2
 import numpy as np
-from ultralytics import YOLO
-import uuid
+import base64
+import csv
+from typing import List
+import tempfile
 import os
 
+# --- Cargar modelo YOLO ---
+from ultralytics import YOLO
+modelo = YOLO("yolov8n.pt")  # Asegúrate de tener tu modelo entrenado aquí
+
 app = FastAPI()
-model = YOLO("yolov8n.pt")  # O el modelo personalizado
-UPLOAD_FOLDER = "images"
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# CORS para permitir frontend local
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-def get_planograma_pos(x_center, y_center, img_shape, filas=5, columnas=12):
-    alto, ancho, _ = img_shape
-    altura_charola = alto / filas
-    ancho_posicion = ancho / columnas
-    charola = filas - int(y_center // altura_charola)
-    posicion = int(x_center // ancho_posicion) + 1
-    return charola, posicion
+def leer_csv_productos(csv_path):
+    productos = []
+    with open(csv_path, newline='', encoding="latin1") as csvfile:  # <-- Cambia aquí
+        reader = csv.reader(csvfile)
+        for row in reader:
+            if row:
+                productos.append(row[0].strip())
+    return productos
+
+def detectar_productos(imagen_np):
+    resultados = modelo.predict(imagen_np)[0]
+    objetos = []
+    for box in resultados.boxes:
+        x1, y1, x2, y2 = map(int, box.xyxy[0])
+        conf = float(box.conf[0])
+        clase = int(box.cls[0])
+        nombre = modelo.names[clase]
+        cx = int((x1 + x2) / 2)
+        cy = int((y1 + y2) / 2)
+        objetos.append({"nombre": nombre, "posicion": (cx, cy), "box": (x1, y1, x2, y2)})
+    return objetos
+
+def comparar_productos(lista1, lista2):
+    diferencias = []
+    for i, obj1 in enumerate(lista1):
+        if i >= len(lista2):
+            break
+        obj2 = lista2[i]
+        if obj1['nombre'] != obj2['nombre']:
+            diferencias.append({
+                "charola": i // 5 + 1,
+                "columna": i % 5 + 1,
+                "esperado": obj1['nombre'],
+                "actual": obj2['nombre']
+            })
+    return diferencias
+
+def dibujar_diferencias(imagen_np, diferencias, objetos):
+    for diff in diferencias:
+        idx = (diff['charola'] - 1) * 5 + (diff['columna'] - 1)
+        if idx < len(objetos):
+            x1, y1, x2, y2 = objetos[idx]['box']
+            cv2.rectangle(imagen_np, (x1, y1), (x2, y2), (0, 0, 255), 3)
+            cv2.putText(imagen_np, f"{diff['esperado']} -> {diff['actual']}", (x1, y1 - 10),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+    return imagen_np
 
 @app.post("/procesar/")
-async def procesar_imagen(file: UploadFile = File(...)):
-    contents = await file.read()
-    np_arr = np.frombuffer(contents, np.uint8)
-    img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
-    results = model(img)[0]
+async def procesar(
+    archivo1: UploadFile = File(...),
+    archivo2: UploadFile = File(...),
+    csv_productos: UploadFile = File(...)
+):
+    with tempfile.NamedTemporaryFile(delete=False) as temp1:
+        temp1.write(await archivo1.read())
+        path1 = temp1.name
+    with tempfile.NamedTemporaryFile(delete=False) as temp2:
+        temp2.write(await archivo2.read())
+        path2 = temp2.name
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".csv") as temp_csv:
+        temp_csv.write(await csv_productos.read())
+        csv_path = temp_csv.name
 
-    detecciones = []
-    for box in results.boxes:
-        cls_id = int(box.cls[0])
-        cls_name = results.names[cls_id]
-        x1, y1, x2, y2 = map(int, box.xyxy[0])
-        x_center = (x1 + x2) / 2
-        y_center = (y1 + y2) / 2
-        charola, posicion = get_planograma_pos(x_center, y_center, img.shape)
+    productos_validos = leer_csv_productos(csv_path)
 
-        detecciones.append({
-            "producto": cls_name,
-            "charola": charola,
-            "posicion": posicion
-        })
+    imagen1 = cv2.imread(path1)
+    imagen2 = cv2.imread(path2)
 
-        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-        label = f"{cls_name} (C{charola}-P{posicion})"
-        cv2.putText(img, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5, (255, 0, 0), 2)
+    lista1 = detectar_productos(imagen1)
+    lista2 = detectar_productos(imagen2)
 
-    # Guardar la imagen con resultados
-    filename = f"{uuid.uuid4()}.jpg"
-    path = os.path.join(UPLOAD_FOLDER, filename)
-    cv2.imwrite(path, img)
+    diferencias = comparar_productos(lista1, lista2)
+    imagen_resultado = dibujar_diferencias(imagen2.copy(), diferencias, lista2)
 
-    return JSONResponse(content={
-        "resultado_img": f"/{path}",
-        "productos": detecciones
+    _, buffer = cv2.imencode(".png", imagen_resultado)
+    imagen_base64 = base64.b64encode(buffer).decode("utf-8")
+
+    os.remove(path1)
+    os.remove(path2)
+    os.remove(csv_path)
+
+    return JSONResponse({
+        "diferencias": diferencias,
+        "imagen_resultado": imagen_base64
     })

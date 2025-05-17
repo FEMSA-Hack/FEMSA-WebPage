@@ -1,69 +1,57 @@
 "use client";
-import { useState } from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+// pages/upload.tsx
+import React, { useState } from "react";
 
-function ImageUploadBox({ title, onImage }: { title: string; onImage?: (img: string) => void }) {
-  const [image, setImage] = useState<string | null>(null);
+export default function UploadPage() {
+  const [image1, setImage1] = useState<File | null>(null);
+  const [image2, setImage2] = useState<File | null>(null);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [responseImage, setResponseImage] = useState<string>("");
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setImage(ev.target?.result as string);
-        if (onImage) onImage(ev.target?.result as string);
-      };
-      reader.readAsDataURL(file);
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!image1 || !image2 || !csvFile) return;
+
+  const formData = new FormData();
+  formData.append("archivo1", image1);
+  formData.append("archivo2", image2);
+  formData.append("csv_productos", csvFile);
+
+  try {
+    const res = await fetch("http://localhost:8000/procesar/", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!res.ok) {
+      throw new Error(`Error en la respuesta: ${res.status}`);
     }
-  };
+
+    const data = await res.json();
+    console.log("Datos detectados:", data);
+    setResponseImage(`data:image/png;base64,${data.imagen_resultado}`);
+  } catch (error) {
+    console.error("Error en fetch:", error);
+    alert("Ocurrió un error al enviar los archivos.");
+  }
+};
 
   return (
-    <div className="bg-white rounded shadow p-6 flex flex-col items-center w-full max-w-md ">
-      <h3 className="text-lg font-semibold mb-4">{title}</h3>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
-        className="mb-4"
-      />
-      {image && (
-        <Image
-          src={image}
-          alt={`Vista previa de ${title}`}
-          className="max-h-64 rounded border"
-          width={256}
-          height={256}
-        />
+    <div>
+      <h1>Subir Archivos</h1>
+      <form onSubmit={handleSubmit}>
+        <input type="file" accept="image/*" onChange={e => setImage1(e.target.files?.[0] || null)} />
+        <input type="file" accept="image/*" onChange={e => setImage2(e.target.files?.[0] || null)} />
+        <input type="file" accept=".csv" onChange={e => setCsvFile(e.target.files?.[0] || null)} />
+        <button type="submit">Enviar</button>
+      </form>
+
+      {responseImage && (
+        <div>
+          <h2>Resultado:</h2>
+          <img src={responseImage} alt="Resultado YOLO" />
+        </div>
       )}
     </div>
-  );
-}
-
-export default function Dashboard() {
-  const router = useRouter();
-  const [realograma, setRealograma] = useState<string | null>(null);
-
-  const handleEnviar = () => {
-    // Aquí podrías guardar el realograma en algún estado global o backend si lo necesitas
-    router.push("/dashboard");
-  };
-
-  return (
-    <section>
-      <h2 className="text-2xl font-bold mb-8 text-center">Dashboard de Imágenes</h2>
-      <div className="flex flex-col md:flex-row gap-8 justify-center items-start text-black">
-        <ImageUploadBox title="Subir Planograma" />
-        <ImageUploadBox title="Subir Realograma" onImage={setRealograma} />
-      </div>
-      <div className="flex justify-center mt-8">
-        <button
-          onClick={handleEnviar}
-          className="mt-4 rounded-full bg-[#e60026] text-white px-8 py-4 text-lg font-bold border-4 border-transparent hover:border-yellow-400 hover:bg-white hover:text-[#e60026] transition-all shadow-lg"
-        >
-          Enviar archivos
-        </button>
-      </div>
-    </section>
   );
 }
