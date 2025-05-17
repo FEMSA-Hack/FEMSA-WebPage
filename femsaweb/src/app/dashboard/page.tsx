@@ -95,7 +95,7 @@ export default function DashboardPage() {
           </div>
         )}  
       </div>
-
+        {/* Hola */}
       {/* DERECHA - Imagen y rectángulos */}
       <div className="md:w-1/3 w-full relative">
         {data && (
