@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
 
 // Simulación de datos de productos
 const productos = [
@@ -28,12 +27,9 @@ const productos = [
 ];
 
 export default function Dashboard() {
-  // Aquí podrías obtener la imagen real del realograma desde un estado global o backend
-  const [realograma, setRealograma] = useState<string | null>(null);
-
   return (
     <section className="flex flex-col md:flex-row gap-8">
-      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="flex-1 flex flex-col gap-6">
         {productos.map((prod) => (
           <div key={prod.nombre} className="bg-white rounded-xl shadow p-6 flex flex-col gap-2 border border-gray-200">
             <div className="flex items-center gap-4">
@@ -50,13 +46,9 @@ export default function Dashboard() {
       </div>
       <div className="flex-1 flex flex-col items-center justify-center">
         <h4 className="text-lg font-semibold mb-4">Realograma</h4>
-        {realograma ? (
-          <Image src={realograma} alt="Realograma" width={320} height={320} className="rounded-xl border" />
-        ) : (
-          <div className="w-80 h-80 bg-gray-200 flex items-center justify-center rounded-xl text-gray-500">
-            Sin imagen de realograma
-          </div>
-        )}
+        <div className="w-80 h-80 bg-gray-200 flex items-center justify-center rounded-xl text-gray-500">
+          Sin imagen de realograma
+        </div>
       </div>
     </section>
   );

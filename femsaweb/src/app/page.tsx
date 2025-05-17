@@ -1,69 +1,54 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 
-function ImageUploadBox({ title, onImage }: { title: string; onImage?: (img: string) => void }) {
-  const [image, setImage] = useState<string | null>(null);
+export default function LoginPage() {
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setImage(ev.target?.result as string);
-        if (onImage) onImage(ev.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Aquí podrías validar usuario/contraseña
+    router.push("/homemain");
   };
 
   return (
-    <div className="bg-white rounded shadow p-6 flex flex-col items-center w-full max-w-md ">
-      <h3 className="text-lg font-semibold mb-4">{title}</h3>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
-        className="mb-4"
-      />
-      {image && (
+    <div className="min-h-screen flex items-center justify-center bg-[#2156d9]">
+      <form
+        onSubmit={handleLogin}
+        className="bg-[#ffffff] rounded-xl shadow-lg p-12 flex flex-col items-center w-full max-w-md border border-blue-200"
+      >
         <Image
-          src={image}
-          alt={`Vista previa de ${title}`}
-          className="max-h-64 rounded border"
+          src="/images/oxxoimage.png"
+          alt="Image OXXO"
+          className="max-h-64 rounded pb-5"
           width={256}
           height={256}
         />
-      )}
-    </div>
-  );
-}
-
-export default function Dashboard() {
-  const router = useRouter();
-  const [realograma, setRealograma] = useState<string | null>(null);
-
-  const handleEnviar = () => {
-    // Aquí podrías guardar el realograma en algún estado global o backend si lo necesitas
-    router.push("/dashboard");
-  };
-
-  return (
-    <section>
-      <h2 className="text-2xl font-bold mb-8 text-center">Dashboard de Imágenes</h2>
-      <div className="flex flex-col md:flex-row gap-8 justify-center items-start text-black">
-        <ImageUploadBox title="Subir Planograma" />
-        <ImageUploadBox title="Subir Realograma" onImage={setRealograma} />
-      </div>
-      <div className="flex justify-center mt-8">
+        <input
+          type="text"
+          placeholder="USERNAME"
+          value={username}
+          onChange={e => setUsername(e.target.value)}
+          className="mb-4 w-full px-4 py-2 rounded border border-blue-300 focus:outline-none"
+        />
+        <input
+          type="password"
+          placeholder="PASSWORD"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          className="mb-6 w-full px-4 py-2 rounded border border-blue-300 focus:outline-none"
+        />
         <button
-          onClick={handleEnviar}
-          className="mt-4 rounded-full bg-[#e60026] text-white px-8 py-4 text-lg font-bold border-4 border-transparent hover:border-yellow-400 hover:bg-white hover:text-[#e60026] transition-all shadow-lg"
+          type="submit"
+          className="w-full bg-[#e60026] text-[#2156d9] font-bold py-2 rounded hover:bg-blue-100 transition"
         >
-          Enviar archivos
+          LOGIN
         </button>
-      </div>
-    </section>
+        <a href="#" className="mt-4 text-white text-sm hover:underline">Forgot password?</a>
+      </form>
+    </div>
   );
 }

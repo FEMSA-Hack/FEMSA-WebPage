@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.css";
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import HeaderWrapper from '../app/headerwrapper/headerwrapper';
 
 
 
@@ -15,14 +13,14 @@ export default function RootLayout({children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="es">
       <body className="BackFemsa">
-        <Header />
-        <main className="min-h-screen container mx-auto p-4 ">
+        <HeaderWrapper />
+        <main className="min-h-screen container mx-auto ">
           {children}
         </main>
-        <Footer />
       </body>
     </html>
   );
