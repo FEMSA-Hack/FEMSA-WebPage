@@ -18,7 +18,7 @@ export default function UploadPage() {
   formData.append("csv_productos", csvFile);
 
   try {
-    const res = await fetch("http://localhost:8000/procesar/", {
+    const res = await fetch("http://127.0.0.1:8000/procesar/", {
       method: "POST",
       body: formData,
     });
