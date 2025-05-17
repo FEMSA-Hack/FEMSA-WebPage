@@ -47,7 +47,7 @@ export default function HomePage() {
   };
 
   return (
-    <section>
+    <section className="flex flex-col justify-center items-center pt-40">
       <h2 className="text-2xl font-bold mb-8 text-center">Dashboard de Imágenes</h2>
       <div className="flex flex-col md:flex-row gap-8 justify-center items-start text-black">
         <ImageUploadBox title="Subir Planograma" />

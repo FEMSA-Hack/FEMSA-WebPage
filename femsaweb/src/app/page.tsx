@@ -15,7 +15,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#2156d9]">
+    <div className="min-h-screen flex items-center justify-center bg-[#de3d3d]">
+      
       <form
         onSubmit={handleLogin}
         className="bg-[#ffffff] rounded-xl shadow-lg p-12 flex flex-col items-center w-full max-w-md border border-blue-200"
@@ -43,7 +44,7 @@ export default function LoginPage() {
         />
         <button
           type="submit"
-          className="w-full bg-[#e60026] text-[#2156d9] font-bold py-2 rounded hover:bg-blue-100 transition"
+          className="w-full bg-[#e60026] text-[#ffffff] font-bold py-2 rounded hover:bg-blue-100 transition"
         >
           LOGIN
         </button>
