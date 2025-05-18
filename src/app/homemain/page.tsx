@@ -58,14 +58,14 @@ export default function HomePage() {
   };
 
   return (
-    <section className="flex flex-col justify-center items-center pt-32 min-h-screen bg-gradient-to-br from-blue-50 to-pink-50">
+    <section className="flex flex-col justify-center items-center pt-32 min-h-screen bg-gradient-to-br from-red-50 to-red-50">
       <h2 className="text-4xl font-extrabold mb-16 text-center text-[#e60026] drop-shadow-lg tracking-wide">
-        Dashboard de Imágenes
+        plaX
       </h2>
       <div className="flex flex-col md:flex-row gap-16 justify-center items-start text-black">
         {/* Realograma Section */}
-        <div className="flex flex-col items-center bg-gradient-to-br from-blue-100 via-white to-blue-200 rounded-3xl shadow-2xl border-4 border-blue-400 p-12 hover:scale-105 transition-transform duration-300 w-[350px]">
-          <span className="mb-4 px-4 py-1 rounded-full bg-blue-600 text-white font-bold shadow-lg text-lg">
+        <div className="flex flex-col items-center bg-gradient-to-br from-red-100 via-white to-red-200 rounded-3xl shadow-2xl border-4 border-blue-400 p-12 hover:scale-105 transition-transform duration-300 w-[350px]">
+          <span className="mb-4 px-4 py-1 rounded-full bg-red-600 text-white font-bold shadow-lg text-lg">
             Realograma
           </span>
           <ImageUploadBox title="Subir Realograma" />
