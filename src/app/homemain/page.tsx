@@ -165,11 +165,7 @@ export default function HomePage() {
             <div className="mt-4 text-lg bg-white rounded p-4 shadow">
               <div><b>Clase:</b> {productoData.clase}</div>
               <div><b>Fila:</b> {productoData.fila}</div>
-              <div><b>Columna:</b> {productoData.columna}</div>
-              <div><b>X:</b> {productoData.x}</div>
-              <div><b>Y:</b> {productoData.y}</div>
-              <div><b>Width:</b> {productoData.width}</div>
-              <div><b>Height:</b> {productoData.height}</div>
+              
             </div>
           )}
         </div>
