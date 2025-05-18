@@ -53,10 +53,16 @@ function ImageUploadBox({
 
 export default function HomePage() {
   const router = useRouter();
-  // Eliminado realogramaFile porque no se usa
+  const [realogramaFile, setRealogramaFile] = useState<File | null>(null);
   const [productoFile, setProductoFile] = useState<File | null>(null);
   const [productoBase64, setProductoBase64] = useState<string | null>(null);
+  const [productoData, setProductoData] = useState<{
+    clase?: string;
+    fila?: number;
+    columna?: number;
+  } | null>(null);
 
+  // POST para producto
   const handleProducto = async () => {
     if (!productoFile) {
       alert("Por favor selecciona una imagen de producto.");
@@ -80,42 +86,90 @@ export default function HomePage() {
       if (data.imagen_base64) {
         const base64Img = `data:${data.content_type};base64,${data.imagen_base64}`;
         setProductoBase64(base64Img);
+        setProductoData({
+          clase: data.clase,
+          fila: data.fila,
+          columna: data.columna,
+        });
         // Guardar en localStorage para la otra página
         localStorage.setItem("standImageUrl", base64Img);
+        localStorage.setItem(
+          "standImageData",
+          JSON.stringify({
+            clase: data.clase,
+            fila: data.fila,
+            columna: data.columna,
+          })
+        );
         router.push("/positionProduct");
       } else {
         setProductoBase64(null);
+        setProductoData(null);
         localStorage.removeItem("standImageUrl");
+        localStorage.removeItem("standImageData");
         alert("No se detectó ninguna clase en la imagen.");
       }
-    } catch {
+    } catch (error) {
       alert("No se pudo enviar la imagen.");
     }
   };
 
-  const handleRealograma = () => {
-    router.push("/positionProduct");
+  // POST para realograma (igual que producto pero usando /api/dos y realogramaFile)
+  const handleRealograma = async () => {
+    if (!realogramaFile) {
+      alert("Por favor selecciona una imagen de realograma.");
+      return;
+    }
+    const formData = new FormData();
+    formData.append("file", realogramaFile);
+
+    try {
+      const response = await fetch("http://localhost:8000/api/dos", {
+        method: "POST",
+        body: formData,
+        headers: {
+          accept: "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Error al enviar la imagen");
+      }
+      const data = await response.json();
+      if (data.imagen_base64) {
+        const base64Img = `data:${data.content_type};base64,${data.imagen_base64}`;
+        // Guardar en localStorage para la otra página
+        localStorage.setItem("standImageUrl", base64Img);
+        localStorage.setItem(
+          "standImageData",
+          JSON.stringify({
+            clase: data.clase,
+            fila: data.fila,
+            columna: data.columna,
+          })
+        );
+        router.push("/positionProduct");
+      } else {
+        localStorage.removeItem("standImageUrl");
+        localStorage.removeItem("standImageData");
+        alert("No se detectó ninguna clase en la imagen.");
+      }
+    } catch (error) {
+      alert("No se pudo enviar la imagen.");
+    }
   };
 
   return (
     <section className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-br from-blue-50 to-pink-50 pb-20">
-      <div className="mt-8 mb-2 flex flex-col items-center">
-        <h2 className="cal-sans-regular text-5xl font-extrabold text-center text-[#e60026] drop-shadow-lg tracking-wide mb-2">
-          PLAX
-        </h2>
-        <p className="text-lg text-gray-700 font-medium max-w-xl text-center">
-          Plataforma para subir imágenes de realogramas y productos, analizar su acomodo y obtener resultados visuales para mejorar la exhibición en tienda.
-        </p>
-      </div>
-      <div className="flex flex-col md:flex-row gap-16 justify-center items-start text-black mt-4">
+      <h2 className="cal-sans-regular text-5xl font-extrabold mb-8 text-center text-[#e60026] drop-shadow-lg tracking-wide">
+        PLAX
+      </h2>
+      <div className="flex flex-col md:flex-row gap-16 justify-center items-start text-black">
         {/* Realograma Section */}
         <div className="flex flex-col items-center bg-gradient-to-br from-blue-100 via-white to-blue-200 rounded-3xl shadow-2xl border-4 border-blue-400 p-12 hover:scale-105 transition-transform duration-300 w-[350px]">
           <span className="mb-4 px-4 py-1 rounded-full bg-blue-600 text-white font-bold shadow-lg text-lg">
             Realograma
           </span>
-          {/* Si decides usar realogramaFile, descomenta la siguiente línea y agrega el estado */}
-          {/* <ImageUploadBox title="Subir realograma" onImageChange={setRealogramaFile} /> */}
-          <ImageUploadBox title="Subir realograma" onImageChange={() => {}} />
+          <ImageUploadBox title="Subir realograma" onImageChange={setRealogramaFile} />
           <button
             onClick={handleRealograma}
             className="mt-8 rounded-full bg-gradient-to-r from-blue-600 to-blue-400 text-white px-10 py-4 text-xl font-extrabold shadow-xl hover:from-blue-800 hover:to-blue-600 hover:scale-110 transition-all border-2 border-blue-700"
@@ -141,6 +195,13 @@ export default function HomePage() {
               alt="Resultado producto"
               className="mt-4 max-w-xs rounded shadow"
             />
+          )}
+          {productoData && (
+            <div className="mt-4 text-lg bg-white rounded p-4 shadow">
+              <div><b>Clase:</b> {productoData.clase}</div>
+              <div><b>Fila:</b> {productoData.fila}</div>
+              <div><b>Columna:</b> {productoData.columna}</div>
+            </div>
           )}
         </div>
       </div>
