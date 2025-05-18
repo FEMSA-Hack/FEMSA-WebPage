@@ -16,7 +16,7 @@ function ImageUploadBox({ title }: { title: string }) {
       reader.readAsDataURL(file);
     }
   };
-
+// 
   return (
     <div className="bg-white rounded shadow p-6  flex flex-col items-center w-full max-w-md ">
       <h3 className="text-lg font-semibold mb-4">{title}</h3>
