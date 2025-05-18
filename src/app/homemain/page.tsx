@@ -51,40 +51,44 @@ function ImageUploadBox({
   );
 }
 
-// ...existing code...
 export default function HomePage() {
   const router = useRouter();
   const [realogramaFile, setRealogramaFile] = useState<File | null>(null);
+  const [productoFile, setProductoFile] = useState<File | null>(null);
+  const [productoBase64, setProductoBase64] = useState<string | null>(null);
 
- // ...existing code...
-  const handleRealograma = async () => {
-    if (!realogramaFile) {
-      alert("Por favor selecciona una imagen de realograma.");
+  const handleProducto = async () => {
+    if (!productoFile) {
+      alert("Por favor selecciona una imagen de producto.");
       return;
     }
     const formData = new FormData();
-    formData.append("file", realogramaFile);
+    formData.append("file", productoFile);
 
     try {
       const response = await fetch("http://localhost:8000/api/uno", {
-        method: "GET",
+        method: "POST",
         body: formData,
         headers: {
-          "accept": "application/json",
-          // No agregues Content-Type, el navegador lo pone automáticamente con boundary
+          accept: "application/json",
         },
       });
       if (!response.ok) {
         throw new Error("Error al enviar la imagen");
       }
-      router.push("/dashboardRealograma");
+      const data = await response.json();
+      if (data.imagen_base64) {
+        setProductoBase64(`data:${data.content_type};base64,${data.imagen_base64}`);
+      } else {
+        setProductoBase64(null);
+        alert("No se detectó ninguna clase en la imagen.");
+      }
     } catch (error) {
       alert("No se pudo enviar la imagen.");
     }
   };
-// ...existing code...
 
-  const handleProducto = () => {
+  const handleRealograma = () => {
     router.push("/positionProduct");
   };
 
@@ -112,13 +116,20 @@ export default function HomePage() {
           <span className="mb-4 px-4 py-1 rounded-full bg-green-600 text-white font-bold shadow-lg text-lg">
             Producto
           </span>
-          <ImageUploadBox title="Subir producto" onImageChange={() => {}} />
+          <ImageUploadBox title="Subir producto" onImageChange={setProductoFile} />
           <button
             onClick={handleProducto}
             className="mt-8 rounded-full bg-gradient-to-r from-green-600 to-green-400 text-white px-10 py-4 text-xl font-extrabold shadow-xl hover:from-green-800 hover:to-green-600 hover:scale-110 transition-all border-2 border-green-700"
           >
             Enviar <br />Producto
           </button>
+          {productoBase64 && (
+            <img
+              src={productoBase64}
+              alt="Resultado producto"
+              className="mt-4 max-w-xs rounded shadow"
+            />
+          )}
         </div>
       </div>
     </section>
