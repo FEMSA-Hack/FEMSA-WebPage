@@ -69,6 +69,7 @@ export default function DashboardPage() {
           <p>Productos incorrectos: {generalStats.incorrectProducts}</p>
         </div>
 
+
         {/* Estadísticas del producto seleccionado (si existe) */}
         {selectedProduct && (
           <div
