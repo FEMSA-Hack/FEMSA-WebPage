@@ -58,7 +58,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen p-30  flex flex-col-reverse md:flex-row md:items-start md:justify-center gap-40">
+    <div className="min-h-screen p-15 pt-5 flex flex-col-reverse md:flex-row md:items-start md:justify-center  gap-20">
       {/* IZQUIERDA - Estadísticas */}
       <div className="md:w-1/3 w-full flex flex-col gap-4">
         {/* Estadísticas generales */}

@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Header() {
   return (
-    <header className="bg-gradient-to-r from-blue-700 to-blue-400 text-white p-4 shadow flex justify-between items-center">
+    <header className="bg-gradient-to-r from-yellow-400 to-red-700 text-white p-4 shadow flex justify-between items-center">
       <div className="flex items-center">
         <Image
           src="/images/FEMSA_Logo.png"

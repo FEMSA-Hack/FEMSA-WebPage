@@ -15,8 +15,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#de3d3d]">
-      
+    <div className="min-h-screen flex items-center justify-center bg-[url('/images/BackFEMSA.jpg')] bg-cover bg-center"> 
       <form
         onSubmit={handleLogin}
         className="bg-[#ffffff] rounded-xl shadow-lg p-12 flex flex-col items-center w-full max-w-md border border-blue-200"

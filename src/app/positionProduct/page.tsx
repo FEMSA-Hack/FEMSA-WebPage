@@ -11,7 +11,7 @@ export default function PositionProductPage() {
   }, []);
 
   return (
-    <section className="flex flex-col items-center justify-center min-h-screen">
+    <section className="flex flex-col items-center justify-center min-h-screen pb-30">
       <h2 className="text-2xl font-bold mb-6">Producto Acomodado en el Stand</h2>
       {standImageUrl ? (
         <Image src={standImageUrl} alt="Producto acomodado" width={500} height={500} className="rounded shadow-lg max-w-lg" />

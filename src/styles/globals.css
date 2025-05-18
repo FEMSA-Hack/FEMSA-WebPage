@@ -35,3 +35,9 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   overflow: hidden;
 }
+
+.cal-sans-regular {
+  font-family: "Cal Sans", sans-serif;
+  font-weight: 1000;
+  font-style: normal;
+}

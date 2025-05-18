@@ -58,8 +58,8 @@ export default function HomePage() {
   };
   // Hola
   return (
-    <section className="flex flex-col justify-center items-center pt-0 min-h-screen bg-gradient-to-br from-blue-50 to-pink-50">
-      <h2 className="text-4xl font-extrabold mb-16 text-center text-[#e60026] drop-shadow-lg tracking-wide">
+    <section className="flex flex-col justify-center items-center  min-h-screen bg-gradient-to-br from-blue-50 to-pink-50 pb-20">
+      <h2 className="cal-sans-regular text-5xl font-extrabold mb-8 text-center text-[#e60026] drop-shadow-lg tracking-wide">
         PLAX
       </h2>
       <div className="flex flex-col md:flex-row gap-16 justify-center items-start text-black">
