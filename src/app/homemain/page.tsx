@@ -68,12 +68,12 @@ export default function HomePage() {
           <span className="mb-4 px-4 py-1 rounded-full bg-blue-600 text-white font-bold shadow-lg text-lg">
             Realograma
           </span>
-          <ImageUploadBox title="Subir Realograma" />
+          <ImageUploadBox title="Subir realograma" />
           <button
             onClick={handleRealograma}
             className="mt-8 rounded-full bg-gradient-to-r from-blue-600 to-blue-400 text-white px-10 py-4 text-xl font-extrabold shadow-xl hover:from-blue-800 hover:to-blue-600 hover:scale-110 transition-all border-2 border-blue-700"
           >
-            Enviar Realograma
+            Enviar realograma
           </button>
         </div>
         {/* Producto Section */}
@@ -81,12 +81,12 @@ export default function HomePage() {
           <span className="mb-4 px-4 py-1 rounded-full bg-green-600 text-white font-bold shadow-lg text-lg">
             Producto
           </span>
-          <ImageUploadBox title="Subir Producto" />
+          <ImageUploadBox title="Subir producto" />
           <button
             onClick={handleProducto}
             className="mt-8 rounded-full bg-gradient-to-r from-green-600 to-green-400 text-white px-10 py-4 text-xl font-extrabold shadow-xl hover:from-green-800 hover:to-green-600 hover:scale-110 transition-all border-2 border-green-700"
           >
-            Enviar Producto
+            Enviar producto
           </button>
         </div>
       </div>
