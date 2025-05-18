@@ -49,18 +49,6 @@ export default function PositionProductPage() {
                     <div>
                       <span className="font-semibold">Columna:</span> {standImageData.columna ?? "-"}
                     </div>
-                    <div>
-                      <span className="font-semibold">X:</span> {standImageData.x ?? "-"}
-                    </div>
-                    <div>
-                      <span className="font-semibold">Y:</span> {standImageData.y ?? "-"}
-                    </div>
-                    <div>
-                      <span className="font-semibold">Width:</span> {standImageData.width ?? "-"}
-                    </div>
-                    <div>
-                      <span className="font-semibold">Height:</span> {standImageData.height ?? "-"}
-                    </div>
                   </>
                 ) : (
                   <>
