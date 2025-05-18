@@ -60,9 +60,13 @@ export default function HomePage() {
     clase?: string;
     fila?: number;
     columna?: number;
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
   } | null>(null);
 
-  // POST para producto
+  // POST para producto (endpoint /uno)
   const handleProducto = async () => {
     if (!productoFile) {
       alert("Por favor selecciona una imagen de producto.");
@@ -90,6 +94,10 @@ export default function HomePage() {
           clase: data.clase,
           fila: data.fila,
           columna: data.columna,
+          x: data.x,
+          y: data.y,
+          width: data.width,
+          height: data.height,
         });
         // Guardar en localStorage para la otra página
         localStorage.setItem("standImageUrl", base64Img);
@@ -99,6 +107,10 @@ export default function HomePage() {
             clase: data.clase,
             fila: data.fila,
             columna: data.columna,
+            x: data.x,
+            y: data.y,
+            width: data.width,
+            height: data.height,
           })
         );
         router.push("/positionProduct");
@@ -114,7 +126,7 @@ export default function HomePage() {
     }
   };
 
-  // POST para realograma (igual que producto pero usando /api/dos y realogramaFile)
+  // POST para realograma (endpoint /dos)
   const handleRealograma = async () => {
     if (!realogramaFile) {
       alert("Por favor selecciona una imagen de realograma.");
@@ -135,24 +147,23 @@ export default function HomePage() {
         throw new Error("Error al enviar la imagen");
       }
       const data = await response.json();
-      if (data.imagen_base64) {
-        const base64Img = `data:${data.content_type};base64,${data.imagen_base64}`;
-        // Guardar en localStorage para la otra página
-        localStorage.setItem("standImageUrl", base64Img);
-        localStorage.setItem(
-          "standImageData",
-          JSON.stringify({
-            clase: data.clase,
-            fila: data.fila,
-            columna: data.columna,
-          })
-        );
-        router.push("/positionProduct");
-      } else {
-        localStorage.removeItem("standImageUrl");
-        localStorage.removeItem("standImageData");
-        alert("No se detectó ninguna clase en la imagen.");
-      }
+      // Guardar los datos relevantes en localStorage para la otra página
+      localStorage.setItem("standImageUrl", ""); // No hay imagen base64 en /dos
+      localStorage.setItem(
+        "standImageData",
+        JSON.stringify({
+          clases_detectadas: data.clases_detectadas,
+          clases_coincidentes: data.clases_coincidentes,
+          clases_faltantes: data.clases_faltantes,
+          porcentaje_coincidencia: data.porcentaje_coincidencia,
+          cumple_umbral: data.cumple_umbral,
+          alerta: data.alerta,
+          productos_posicion_correcta: data.productos_posicion_correcta,
+          productos_posicion_incorrecta: data.productos_posicion_incorrecta,
+          porcentaje_posiciones_correctas: data.porcentaje_posiciones_correctas,
+        })
+      );
+      router.push("/positionProduct");
     } catch (error) {
       alert("No se pudo enviar la imagen.");
     }
@@ -201,6 +212,10 @@ export default function HomePage() {
               <div><b>Clase:</b> {productoData.clase}</div>
               <div><b>Fila:</b> {productoData.fila}</div>
               <div><b>Columna:</b> {productoData.columna}</div>
+              <div><b>X:</b> {productoData.x}</div>
+              <div><b>Y:</b> {productoData.y}</div>
+              <div><b>Width:</b> {productoData.width}</div>
+              <div><b>Height:</b> {productoData.height}</div>
             </div>
           )}
         </div>
