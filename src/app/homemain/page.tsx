@@ -58,35 +58,40 @@ export default function HomePage() {
   const [productoBase64, setProductoBase64] = useState<string | null>(null);
 
   const handleProducto = async () => {
-    if (!productoFile) {
-      alert("Por favor selecciona una imagen de producto.");
-      return;
-    }
-    const formData = new FormData();
-    formData.append("file", productoFile);
+  if (!productoFile) {
+    alert("Por favor selecciona una imagen de producto.");
+    return;
+  }
+  const formData = new FormData();
+  formData.append("file", productoFile);
 
-    try {
-      const response = await fetch("http://localhost:8000/api/uno", {
-        method: "POST",
-        body: formData,
-        headers: {
-          accept: "application/json",
-        },
-      });
-      if (!response.ok) {
-        throw new Error("Error al enviar la imagen");
-      }
-      const data = await response.json();
-      if (data.imagen_base64) {
-        setProductoBase64(`data:${data.content_type};base64,${data.imagen_base64}`);
-      } else {
-        setProductoBase64(null);
-        alert("No se detectó ninguna clase en la imagen.");
-      }
-    } catch (error) {
-      alert("No se pudo enviar la imagen.");
+  try {
+    const response = await fetch("http://localhost:8000/api/uno", {
+      method: "POST",
+      body: formData,
+      headers: {
+        accept: "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Error al enviar la imagen");
     }
-  };
+    const data = await response.json();
+    if (data.imagen_base64) {
+      const base64Img = `data:${data.content_type};base64,${data.imagen_base64}`;
+      setProductoBase64(base64Img);
+      // Guardar en localStorage para la otra página
+      localStorage.setItem("standImageUrl", base64Img);
+      router.push("/positionProduct");
+    } else {
+      setProductoBase64(null);
+      localStorage.removeItem("standImageUrl");
+      alert("No se detectó ninguna clase en la imagen.");
+    }
+  } catch (error) {
+    alert("No se pudo enviar la imagen.");
+  }
+};
 
   const handleRealograma = () => {
     router.push("/positionProduct");
