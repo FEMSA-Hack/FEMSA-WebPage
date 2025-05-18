@@ -58,7 +58,7 @@ export default function HomePage() {
   };
   // Hola
   return (
-    <section className="flex flex-col justify-center items-center pt-32 min-h-screen bg-gradient-to-br from-blue-50 to-pink-50">
+    <section className="flex flex-col justify-center items-center pt-0 min-h-screen bg-gradient-to-br from-blue-50 to-pink-50">
       <h2 className="text-4xl font-extrabold mb-16 text-center text-[#e60026] drop-shadow-lg tracking-wide">
         Dashboard de Imágenes
       </h2>

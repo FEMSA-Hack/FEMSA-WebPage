@@ -18,7 +18,7 @@ export default function RootLayout({children,
     <html lang="es">
       <body className="BackFemsa">
         <HeaderWrapper />
-        <main className="min-h-screen container mx-auto">
+        <main className="w-full min-h-screen">
           {children}
         </main>
       </body>
