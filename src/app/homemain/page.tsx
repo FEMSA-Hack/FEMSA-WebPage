@@ -56,15 +56,7 @@ export default function HomePage() {
   const [realogramaFile, setRealogramaFile] = useState<File | null>(null);
   const [productoFile, setProductoFile] = useState<File | null>(null);
   const [productoBase64, setProductoBase64] = useState<string | null>(null);
-  const [productoData, setProductoData] = useState<{
-    clase?: string;
-    fila?: number;
-    columna?: number;
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-  } | null>(null);
+  const [productoData, setProductoData] = useState<any>(null);
 
   // POST para producto (endpoint /uno)
   const handleProducto = async () => {
@@ -79,40 +71,16 @@ export default function HomePage() {
       const response = await fetch("http://localhost:8000/api/uno", {
         method: "POST",
         body: formData,
-        headers: {
-          accept: "application/json",
-        },
+        headers: { accept: "application/json" },
       });
-      if (!response.ok) {
-        throw new Error("Error al enviar la imagen");
-      }
+      if (!response.ok) throw new Error("Error al enviar la imagen");
       const data = await response.json();
       if (data.imagen_base64) {
         const base64Img = `data:${data.content_type};base64,${data.imagen_base64}`;
         setProductoBase64(base64Img);
-        setProductoData({
-          clase: data.clase,
-          fila: data.fila,
-          columna: data.columna,
-          x: data.x,
-          y: data.y,
-          width: data.width,
-          height: data.height,
-        });
-        // Guardar en localStorage para la otra página
+        setProductoData(data);
         localStorage.setItem("standImageUrl", base64Img);
-        localStorage.setItem(
-          "standImageData",
-          JSON.stringify({
-            clase: data.clase,
-            fila: data.fila,
-            columna: data.columna,
-            x: data.x,
-            y: data.y,
-            width: data.width,
-            height: data.height,
-          })
-        );
+        localStorage.setItem("standImageData", JSON.stringify(data));
         router.push("/positionProduct");
       } else {
         setProductoBase64(null);
@@ -139,30 +107,16 @@ export default function HomePage() {
       const response = await fetch("http://localhost:8000/api/dos", {
         method: "POST",
         body: formData,
-        headers: {
-          accept: "application/json",
-        },
+        headers: { accept: "application/json" },
       });
-      if (!response.ok) {
-        throw new Error("Error al enviar la imagen");
-      }
+      if (!response.ok) throw new Error("Error al enviar la imagen");
       const data = await response.json();
-      // Guardar los datos relevantes en localStorage para la otra página
-      localStorage.setItem("standImageUrl", ""); // No hay imagen base64 en /dos
-      localStorage.setItem(
-        "standImageData",
-        JSON.stringify({
-          clases_detectadas: data.clases_detectadas,
-          clases_coincidentes: data.clases_coincidentes,
-          clases_faltantes: data.clases_faltantes,
-          porcentaje_coincidencia: data.porcentaje_coincidencia,
-          cumple_umbral: data.cumple_umbral,
-          alerta: data.alerta,
-          productos_posicion_correcta: data.productos_posicion_correcta,
-          productos_posicion_incorrecta: data.productos_posicion_incorrecta,
-          porcentaje_posiciones_correctas: data.porcentaje_posiciones_correctas,
-        })
-      );
+      // Si hay imagen_base64, guárdala, si no, guarda vacío
+      const base64Img = data.imagen_base64
+        ? `data:${data.content_type};base64,${data.imagen_base64}`
+        : "";
+      localStorage.setItem("standImageUrl", base64Img);
+      localStorage.setItem("standImageData", JSON.stringify(data));
       router.push("/positionProduct");
     } catch (error) {
       alert("No se pudo enviar la imagen.");
