@@ -1,9 +1,18 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export default function Header() {
   return (
     <header className="bg-gradient-to-r from-blue-700 to-blue-400 text-white p-4 shadow flex justify-between items-center">
-      <h1 className="text-2xl font-bold tracking-wide">FEMSA </h1>
+      <div className="flex items-center">
+        <Image
+          src="/images/FEMSA_Logo.png"
+          alt="Logo FEMSA"
+          width={150}
+          height={100}
+          className="mr-2"
+        />
+      </div>
       <nav>
         <Link
           href="/homemain"
