@@ -18,14 +18,20 @@ function ImageUploadBox({ title }: { title: string }) {
   };
 
   return (
-    <div className="bg-white rounded shadow p-6 flex flex-col items-center w-full max-w-md ">
+    <div className="bg-white rounded shadow p-6  flex flex-col items-center w-full max-w-md ">
       <h3 className="text-lg font-semibold mb-4">{title}</h3>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
-        className="mb-4"
-      />
+      <label className="mb-4 w-full cursor-pointer">
+      <span className="block bg-gray-100 border border-gray-300 rounded px-4 py-2 text-center text-gray-700 hover:bg-gray-200 transition truncate overflow-hidden w-full">
+        {image ? "Archivo seleccionado" : "Seleccionar archivo"}
+      </span>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="hidden"
+        />
+      </label>
+      
       {image && (
         <Image
           src={image}
@@ -39,28 +45,52 @@ function ImageUploadBox({ title }: { title: string }) {
   );
 }
 
+// ...existing code...
 export default function HomePage() {
   const router = useRouter();
 
-  const handleEnviar = () => {
-    router.push("/dashboard");
+  const handleRealograma = () => {
+    router.push("/dashboardRealograma");
+  };
+
+  const handleProducto = () => {
+    router.push("/positionProduct");
   };
 
   return (
-    <section className="flex flex-col justify-center items-center pt-40">
-      <h2 className="text-2xl font-bold mb-8 text-center">Dashboard de Imágenes</h2>
-      <div className="flex flex-col md:flex-row gap-8 justify-center items-start text-black">
-        <ImageUploadBox title="Subir Planograma" />
-        <ImageUploadBox title="Subir Realograma" />
-      </div>
-      <div className="flex justify-center mt-8">
-        <button
-          onClick={handleEnviar}
-          className="mt-4 rounded-full bg-[#e60026] text-white px-8 py-4 text-lg font-bold border-4 border-transparent hover:border-yellow-400 hover:bg-white hover:text-[#e60026] transition-all shadow-lg"
-        >
-          Enviar archivos
-        </button>
+    <section className="flex flex-col justify-center items-center pt-32 min-h-screen bg-gradient-to-br from-blue-50 to-pink-50">
+      <h2 className="text-4xl font-extrabold mb-16 text-center text-[#e60026] drop-shadow-lg tracking-wide">
+        Dashboard de Imágenes
+      </h2>
+      <div className="flex flex-col md:flex-row gap-16 justify-center items-start text-black">
+        {/* Realograma Section */}
+        <div className="flex flex-col items-center bg-gradient-to-br from-blue-100 via-white to-blue-200 rounded-3xl shadow-2xl border-4 border-blue-400 p-12 hover:scale-105 transition-transform duration-300 w-[350px]">
+          <span className="mb-4 px-4 py-1 rounded-full bg-blue-600 text-white font-bold shadow-lg text-lg">
+            Realograma
+          </span>
+          <ImageUploadBox title="Subir Realograma" />
+          <button
+            onClick={handleRealograma}
+            className="mt-8 rounded-full bg-gradient-to-r from-blue-600 to-blue-400 text-white px-10 py-4 text-xl font-extrabold shadow-xl hover:from-blue-800 hover:to-blue-600 hover:scale-110 transition-all border-2 border-blue-700"
+          >
+            Enviar Realograma
+          </button>
+        </div>
+        {/* Producto Section */}
+        <div className="flex flex-col items-center bg-gradient-to-br from-green-100 via-white to-green-200 rounded-3xl shadow-2xl border-4 border-green-400 p-12 hover:scale-105 transition-transform duration-300 w-[350px]">
+          <span className="mb-4 px-4 py-1 rounded-full bg-green-600 text-white font-bold shadow-lg text-lg">
+            Producto
+          </span>
+          <ImageUploadBox title="Subir Producto" />
+          <button
+            onClick={handleProducto}
+            className="mt-8 rounded-full bg-gradient-to-r from-green-600 to-green-400 text-white px-10 py-4 text-xl font-extrabold shadow-xl hover:from-green-800 hover:to-green-600 hover:scale-110 transition-all border-2 border-green-700"
+          >
+            Enviar Producto
+          </button>
+        </div>
       </div>
     </section>
   );
 }
+// ...existing code...
