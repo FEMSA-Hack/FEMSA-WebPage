@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Header() {
   return (
-    <header className="bg-gradient-to-r from-blue-700 to-blue-400 text-white p-4 shadow flex justify-between items-center">
+    <header className="bg-gradient-to-r from-red-700 to-yellow-400 text-white p-4 shadow flex justify-between items-center">
       <h1 className="text-2xl font-bold tracking-wide">FEMSA </h1>
       <nav>
         <Link
